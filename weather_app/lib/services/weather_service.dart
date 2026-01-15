@@ -14,7 +14,29 @@ class WeatherService {
     if (response.statusCode == 200) {
       return Weather.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to load weather data');
+      throw Exception('Failed to load weather data: ${response.statusCode}');
+    }
+  }
+
+  Future<Weather> getWeatherDataByCity(String city) async {
+    final response = await http.get(Uri.parse(
+        '$_baseUrl/forecast.json?key=$_apiKey&q=$city&days=7&aqi=yes&alerts=yes'));
+
+    if (response.statusCode == 200) {
+      return Weather.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load weather data for $city: ${response.statusCode}');
+    }
+  }
+
+  Future<List<dynamic>> searchCity(String query) async {
+    final response = await http.get(Uri.parse(
+        '$_baseUrl/search.json?key=$_apiKey&q=$query'));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to search for cities: ${response.statusCode}');
     }
   }
 }
